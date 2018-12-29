@@ -16,17 +16,20 @@ DST_DIR = f'./outputs/{SRC_NAME}_{LEVEL}'
 
 os.makedirs(DST_DIR, exist_ok=True)
 s = OpenSlide(SRC_PATH)
-dims = s. level_dimensions[LEVEL]
+dims = s.level_dimensions[LEVEL]
 W = dims[0]
 H = dims[1]
 X = int(W / TILE_SIZE) + 1
 Y = int(H / TILE_SIZE) + 1
 print(f' {dims} pixels {X} / {Y} tiles')
+downsamples = s.level_downsamples[LEVEL]
 for x in range(0, X):
     for y in range(0, Y):
         w = TILE_SIZE if (x < X - 1) else W % TILE_SIZE
         h = TILE_SIZE if (y < Y - 1) else H % TILE_SIZE
-        img = s.read_region((x * TILE_SIZE, y * TILE_SIZE), LEVEL, (w, h))
+        x_start = int(x * TILE_SIZE * downsamples)
+        y_start = int(y * TILE_SIZE * downsamples)
+        img = s.read_region((x_start, y_start), LEVEL, (w, h))
         if not img.mode == 'RGB':
           img = img.convert('RGB')
         img.save(f'{DST_DIR}/{x}_{y}_tile.jpg', quality=100, optimize=True)
