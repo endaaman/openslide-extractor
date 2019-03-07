@@ -25,21 +25,21 @@ X = W // SIZE + 1
 Y = H // SIZE + 1
 ww = [(W + i) // X for i in range(X)]
 hh = [(H + i) // Y for i in range(Y)]
-
-print(f' {dims} pixels {X} / {Y} tiles')
-downsamples = s.level_downsamples[LEVEL]
+print(f'{SRC_PATH}: {W}x{H}px -> {X}/{Y} tiles')
+scale = s.level_downsamples[LEVEL]
 pos = [0, 0]
 for y, h in enumerate(hh):
     pos[0] = 0
     for x, w in enumerate(ww):
         img = s.read_region(pos, LEVEL, (w, h))
-        # if not img.mode == 'RGB':
-        #   img = img.convert('RGB')
-        # img.save(f'{DST_DIR}/{x}_{y}_tile.jpg', quality=100, optimize=True)
-        print(pos, x, y, w, h, img.mode)
+        if not img.mode == 'RGB':
+          img = img.convert('RGB')
+        p = f'{DST_DIR}/{x}_{y}_tile.jpg'
+        img.save(p, quality=100, optimize=True)
+        print(f'saved {p}')
         img.close()
-        pos[0] += w
-    pos[1] += h
+        pos[0] += int(w * scale)
+    pos[1] += int(h * scale)
     gc.collect()
 
 print('done')
