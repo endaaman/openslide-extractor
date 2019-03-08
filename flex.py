@@ -16,7 +16,7 @@ LEVEL = args.level
 SIZE = args.size
 
 SRC_NAME, _ = os.path.splitext(os.path.basename(SRC_PATH))
-DST_DIR = f'./outputs/{SRC_NAME}/{LEVEL}'
+DST_DIR = f'./outputs/{SRC_NAME}_{LEVEL}'
 os.makedirs(DST_DIR, exist_ok=True)
 s = OpenSlide(SRC_PATH)
 dims = s.level_dimensions[LEVEL]
